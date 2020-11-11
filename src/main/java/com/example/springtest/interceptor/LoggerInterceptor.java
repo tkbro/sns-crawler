@@ -14,17 +14,15 @@ public class LoggerInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        logger.info(" Class : " + (handler.getClass()));
-        logger.info(" Request URI : " + (request.getRequestURI()));
-        logger.info(" Servlet URI : " + (request.getServletPath()));
-        logger.info(" HttpServletMapping : " + (request.getHttpServletMapping()));
-        logger.info(" Request URL : " + (request.getRequestURL()));
-        logger.info(" response Status : {}", (response.getStatus()));
         return super.preHandle(request, response, handler);
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         super.postHandle(request, response, handler, modelAndView);
+        logger.info(" Request Address : " + request.getRemoteAddr()
+            + " \tRequest URI : " + request.getRequestURI() + " \tServlet URI : " + request.getServletPath()
+            + " \tRequest URL : " + request.getRequestURL()
+            + " \tResponse Status : " + response.getStatus() + " \tHTTP Method : " + request.getMethod());
     }
 }
