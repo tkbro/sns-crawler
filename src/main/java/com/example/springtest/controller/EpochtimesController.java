@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-public class epochtimesController {
+public class EpochtimesController {
     @GetMapping("/items")
     public Map getArgs(@RequestParam long from){
         Map<String, Object> resultMap = new HashMap<>();
