@@ -1,6 +1,7 @@
 package com.example.springtest;
 
 import com.example.springtest.model.Article;
+import com.example.springtest.repository.ArticleRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,10 @@ class SpringtestApplicationTests {
     @Autowired
     ArticleDataStore articleDataStore;
 
-	@Test
+    @Autowired
+    ArticleRepository articleRepository;
+
+    @Test
 	void contextLoads() {
 	}
 
@@ -51,5 +55,10 @@ class SpringtestApplicationTests {
         assertEquals(2L, articles.get(0).getEpochCreatedTime());
         assertEquals(3L, articles.get(1).getEpochCreatedTime());
         assertEquals(5L, articles.get(2).getEpochCreatedTime());
+    }
+
+    @Test
+    void articleRepositoryTest() {
+	    articleRepository.save(new Article("1", "url", "title", 5L));
     }
 }
