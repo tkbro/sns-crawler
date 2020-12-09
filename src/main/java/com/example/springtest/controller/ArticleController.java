@@ -1,14 +1,13 @@
 package com.example.springtest.controller;
 
 import com.example.springtest.model.Article;
-import com.example.springtest.repository.ArticleDataStore;
 import com.example.springtest.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 @RestController
 public class ArticleController {
@@ -19,9 +18,9 @@ public class ArticleController {
     @GetMapping("/items")
     public Map<Long, Object> getArgs(@RequestParam long from){
         // TODO: Validate param
-        Map<Long, Object> resultMap = new HashMap<>();
+        Map<Long, Object> resultMap = new TreeMap<>();
         for(Article article : articleRepository.findBeforeCreatedAt(from)) {
-            resultMap.put(article.getEpochCreatedTime(), article);
+            resultMap.put(article.getCreatedAt(), article);
         }
         return resultMap;
     }
