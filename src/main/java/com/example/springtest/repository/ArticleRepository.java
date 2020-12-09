@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.time.Instant;
 import java.util.List;
 
 @Repository
@@ -18,13 +19,10 @@ public class ArticleRepository {
     }
 
     public List<Article> findBeforeCreatedAt(long createAt) {
-        throw new NotImplementedException();
-        //return ;
-
+        return articleDataStore.subList(createAt, Instant.now().toEpochMilli());
     }
 
     public void save(Article article) {
-        throw new NotImplementedException();
-
+        articleDataStore.put(article.getEpochCreatedTime(), article);
     }
 }
