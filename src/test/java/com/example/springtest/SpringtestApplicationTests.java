@@ -2,13 +2,12 @@ package com.example.springtest;
 
 import com.example.springtest.model.Article;
 import com.example.springtest.repository.ArticleRepository;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.example.springtest.repository.ArticleDataStore;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,11 @@ class SpringtestApplicationTests {
     @Autowired
     ArticleRepository articleRepository;
 
+    @BeforeEach
+    void clearArticleDataStore() {
+        articleDataStore.clear();
+    }
+
     @Test
 	void contextLoads() {
 	}
@@ -35,13 +39,13 @@ class SpringtestApplicationTests {
         articleDataStore.put(2L, new Article("1", "url", "title", 2L));
         articleDataStore.put(4L, new Article("1", "url", "title", 4L));
 
-        List<Article> articles = articleDataStore.subList(2L, 5L);
+        List<Article> articles = articleDataStore.subList(2L);
         System.out.println(articles);
 
         assertEquals(3, articles.size());
-        assertEquals(2L, articles.get(0).getEpochCreatedTime());
-        assertEquals(3L, articles.get(1).getEpochCreatedTime());
-        assertEquals(4L, articles.get(2).getEpochCreatedTime());
+        assertEquals(2L, articles.get(0).getCreatedAt());
+        assertEquals(3L, articles.get(1).getCreatedAt());
+        assertEquals(4L, articles.get(2).getCreatedAt());
     }
 
     @Test
@@ -51,13 +55,13 @@ class SpringtestApplicationTests {
         articleDataStore.put(2L, new Article("1", "url", "title", 2L));
         articleDataStore.put(5L, new Article("1", "url", "title", 5L));
 
-        List<Article> articles = articleDataStore.subList(2L, 6L);
+        List<Article> articles = articleDataStore.subList(2L);
         System.out.println(articles);
 
         assertEquals(3, articles.size());
-        assertEquals(2L, articles.get(0).getEpochCreatedTime());
-        assertEquals(3L, articles.get(1).getEpochCreatedTime());
-        assertEquals(5L, articles.get(2).getEpochCreatedTime());
+        assertEquals(2L, articles.get(0).getCreatedAt());
+        assertEquals(3L, articles.get(1).getCreatedAt());
+        assertEquals(5L, articles.get(2).getCreatedAt());
     }
 
     @Test
