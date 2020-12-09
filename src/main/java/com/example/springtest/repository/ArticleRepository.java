@@ -18,11 +18,11 @@ public class ArticleRepository {
         this.articleDataStore = articleDataStore;
     }
 
-    public List<Article> findBeforeCreatedAt(long createAt) {
-        return articleDataStore.subList(createAt, Instant.now().toEpochMilli());
+    public List<Article> findBeforeCreatedAt(long createdAt) {
+        return articleDataStore.subList(createdAt);
     }
 
     public void save(Article article) {
-        articleDataStore.put(article.getEpochCreatedTime(), article);
+        articleDataStore.put(article.getCreatedAt(), article);
     }
 }

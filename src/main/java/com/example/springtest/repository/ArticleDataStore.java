@@ -16,7 +16,7 @@ public class ArticleDataStore extends ConcurrentSkipListMap<Long, Article> {
         new ArrayList<>();
     }
 
-    public List<Article> subList(Long fromKey, Long toKey) {
-        return new ArrayList<Article>(super.subMap(fromKey, toKey).values());
+    public List<Article> subList(Long fromKey) {
+        return new ArrayList<>(super.subMap(fromKey, true, lastKey(), true).values());
     }
 }
