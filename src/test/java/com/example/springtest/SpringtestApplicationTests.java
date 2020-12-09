@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.example.springtest.repository.ArticleDataStore;
 
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -59,6 +62,13 @@ class SpringtestApplicationTests {
 
     @Test
     void articleRepositoryTest() {
-	    articleRepository.save(new Article("1", "url", "title", 5L));
+        articleRepository.save(new Article("1", "url", "title", 5L));
+        articleRepository.save(new Article("1", "url", "title", 5L));
+        articleRepository.save(new Article("1", "url", "title", 5L));
+        Map<String, Object> resultMap = new HashMap<>();
+        for(Article article : articleRepository.findBeforeCreatedAt(0)) {
+            resultMap.put("article", article);
+        }
+        System.out.println(resultMap);
     }
 }
