@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 @RestController
 public class ArticleController {
@@ -20,13 +20,8 @@ public class ArticleController {
     ArticleMongoRepository articleMongoRepository;
 
     @GetMapping("/items")
-    public Map<Long, Object> getArgs(@RequestParam long from){
-        // TODO: Validate param
-        Map<Long, Object> resultMap = new TreeMap<>();
-        for(Article article : articleRepository.findBeforeCreatedAt(from)) {
-            resultMap.put(article.getCreatedAt(), article);
-        }
-        return resultMap;
+    public List<Article> getArgs(@RequestParam long from){
+        return articleMongoRepository.findByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(from);
     }
 
     @PostMapping("/items")
