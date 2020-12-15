@@ -12,7 +12,7 @@ import java.time.Instant;
 @Getter
 @Document (collection = "myCollection")
 public class Article {
-    private String id;
+    private String articleId;
     private String url;
     private String title;
     private Long createdAt = Instant.now().toEpochMilli();
