@@ -1,6 +1,7 @@
 package com.example.springtest;
 
 import com.example.springtest.model.Article;
+import com.example.springtest.repository.ArticleMongoRepository;
 import com.example.springtest.repository.ArticleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,9 @@ class SpringtestApplicationTests {
 
     @Autowired
     ArticleRepository articleRepository;
+
+    @Autowired
+    ArticleMongoRepository articleMongoRepository;
 
     @BeforeEach
     void clearArticleDataStore() {
@@ -74,5 +78,11 @@ class SpringtestApplicationTests {
             resultMap.put("article", article);
         }
         System.out.println(resultMap);
+    }
+
+    // TODO: remove this
+    @Test
+    void articleMongoRepositoryTest() {
+        articleMongoRepository.save(new Article("1", "url", "title", 5L));
     }
 }
