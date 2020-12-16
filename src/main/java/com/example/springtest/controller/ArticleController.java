@@ -14,9 +14,6 @@ import java.util.Map;
 public class ArticleController {
 
     @Autowired
-    ArticleRepository articleRepository;
-
-    @Autowired
     ArticleMongoRepository articleMongoRepository;
 
     @GetMapping("/items")
