@@ -15,13 +15,13 @@ public class ArticleController {
     @Autowired
     ArticleMongoRepository articleMongoRepository;
 
-    @GetMapping("/items")
-    public List<Article> getArgs(@RequestParam long from){
+    @GetMapping("/articles")
+    public List<Article> getArticles(@RequestParam long from){
         return articleMongoRepository.findByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(from);
     }
 
-    @PostMapping("/items")
-    public Map<String, Object> postArgs(@RequestBody Article article) {
+    @PostMapping("/articles")
+    public Map<String, Object> postArticles(@RequestBody Article article) {
         Map<String, Object> resultMap = new HashMap<>();
         articleMongoRepository.save(article);
         resultMap.put("article", article);
