@@ -2,7 +2,6 @@ package com.example.springtest.controller;
 
 import com.example.springtest.model.Article;
 import com.example.springtest.repository.ArticleMongoRepository;
-import com.example.springtest.repository.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
