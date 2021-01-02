@@ -1,7 +1,7 @@
-package com.example.springtest.controller;
+package com.example.springtest.module.article.controller;
 
-import com.example.springtest.model.Article;
-import com.example.springtest.repository.ArticleMongoRepository;
+import com.example.springtest.module.article.repository.ArticleMongoRepository;
+import com.example.springtest.module.article.model.Article;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
