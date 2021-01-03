@@ -1,0 +1,7 @@
+package com.example.springtest.common.config;
+
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class SchedulingConfiguration {
+}
