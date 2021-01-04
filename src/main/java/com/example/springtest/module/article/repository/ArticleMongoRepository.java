@@ -1,6 +1,6 @@
-package com.example.springtest.repository;
+package com.example.springtest.module.article.repository;
 
-import com.example.springtest.model.Article;
+import com.example.springtest.module.article.model.Article;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

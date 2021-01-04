@@ -1,4 +1,4 @@
-package com.example.springtest.model;
+package com.example.springtest.module.article.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
