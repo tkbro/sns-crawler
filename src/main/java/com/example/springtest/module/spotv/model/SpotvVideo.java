@@ -1,4 +1,4 @@
-package com.example.springtest.module.article.model;
+package com.example.springtest.module.spotv.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,10 +12,14 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Document (collection = "myCollection")
-public class Article {
-    private String articleId;
+@Document(collection = "spotvVideo")
+public class SpotvVideo {
+
+    @Indexed(unique = true)
+    private String videoId;
+
     private String url;
+
     private String title;
 
     @Indexed(direction = IndexDirection.DESCENDING)
