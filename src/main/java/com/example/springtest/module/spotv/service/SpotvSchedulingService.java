@@ -7,10 +7,10 @@ import com.example.springtest.module.spotv.repository.SpotvMongoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -59,48 +59,67 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
             WebDriverWait wait = new WebDriverWait(driver, 30);
             WebElement parent = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#items.style-scope.ytd-grid-renderer")));
 
-            driver.findElement(By.cssSelector("body")).sendKeys(Keys.END);
-            Thread.sleep(500);
-            driver.findElement(By.cssSelector("body")).sendKeys(Keys.END);
-            Thread.sleep(500);
-            driver.findElement(By.cssSelector("body")).sendKeys(Keys.END);
-            Thread.sleep(500);
-            driver.findElement(By.cssSelector("body")).sendKeys(Keys.END);
-            Thread.sleep(500);
-            driver.findElement(By.cssSelector("body")).sendKeys(Keys.END);
-            Thread.sleep(500);
+            boolean isTimeout = false;
+            //It scans 30 videos per loop, so it scans 3000 videos in total
+            for(int i =  0; i < 100; i++) {
+                Document doc = Jsoup.parse(parent.getAttribute("innerHTML"), "https://www.youtube.com");
+                Elements contents = doc.select("ytd-grid-video-renderer.style-scope.ytd-grid-renderer");
+                log.debug("Searched contents : {}", contents.size());
 
-            Document doc = Jsoup.parse(driver.getPageSource(), "https://www.youtube.com");
-            Elements contents = doc.select("ytd-grid-video-renderer.style-scope.ytd-grid-renderer");
+                //Basically it works 30 times, when it is not a multiple of 30, it only works until that point
+                for(int j = 0; j < 30 && (i * 30) + j < contents.size(); j++) {
+                    int videoNode = (i * 30) + j;
+                    String href = contents.get(videoNode).select("#video-title.yt-simple-endpoint.style-scope.ytd-grid-video-renderer").attr("abs:href");
 
-            for (Element content : contents) {
-                String title = content.select("#video-title.yt-simple-endpoint.style-scope.ytd-grid-video-renderer").text();
-                String href = content.select("#video-title.yt-simple-endpoint.style-scope.ytd-grid-video-renderer").attr("abs:href");
-
-                if (title.contains("")) {
                     URL url = new URL(href);
                     Map<String, String> queryMap = UrlUtils.getQueryMap(url.getQuery());
 
-                    result.add(new SpotvVideo(queryMap.get("v"), href, title, Instant.now().toEpochMilli()));
+                    if(!spotvMongoRepository.existsByVideoId(queryMap.get("v"))) {
+                        String title = contents.get(videoNode).select("#video-title.yt-simple-endpoint.style-scope.ytd-grid-video-renderer").text();
+                        result.add(new SpotvVideo(queryMap.get("v"), href, title, Instant.now().toEpochMilli()));
+                        log.debug("node number : {}", videoNode);
+                    }
+                    else {
+                        log.info("[Found existing video] New contents size : {}", result.size());
+                        return result;
+                    }
+                }
+                if(isTimeout) {
+                    log.info("[There is no more video] New contents size : {}", result.size());
+                    return result;
+                }
+
+                long start = System.currentTimeMillis();
+                long endTime = start + (10 * 1000);     //Timeout is 10 sec
+
+                //Send the "End key" until it finds the next 30 videos
+                while (contents.size() < (30 * i) + 60) {
+                    driver.findElement(By.cssSelector("body")).sendKeys(Keys.END);
+                    wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("#items.style-scope.ytd-grid-renderer")));
+                    doc = Jsoup.parse(parent.getAttribute("innerHTML"), "https://www.youtube.com");
+                    contents = doc.select("ytd-grid-video-renderer.style-scope.ytd-grid-renderer");
+
+                    if(System.currentTimeMillis() >= endTime) {
+                        isTimeout = true;
+                        break;
+                    }
                 }
             }
 
-        } catch (InterruptedException | MalformedURLException e) {
+        } catch (MalformedURLException | TimeoutException e) {
             log.error("Crawl failed. [{}]", e.getMessage());
             throw new RuntimeException("Crawl failed.", e);
         }
+        log.info("New contents size : {}", result.size());
         return result;
     }
 
     @Override
     public void handleCrawledResult(List<SpotvVideo> crawledResult) {
         for (SpotvVideo result : crawledResult) {
-            if (!spotvMongoRepository.existsByVideoId(result.getVideoId())) {
-                log.info("Added new video: [{}]", result.getTitle());
-                spotvMongoRepository.save(result);
-            }
+            log.debug("Added new video: [{}]", result.getTitle());
+            spotvMongoRepository.save(result);
         }
+        log.info("Added videos size : {}", crawledResult.size());
     }
-
 }
-

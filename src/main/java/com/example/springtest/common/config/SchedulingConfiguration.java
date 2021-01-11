@@ -27,7 +27,7 @@ public class SchedulingConfiguration {
         jiryeSchedulingService.handleCrawledResult(crawledResult);
     }
 
-    @Scheduled(initialDelay = 1000, fixedRate = 36000)  // TODO: Extract param as properties
+    @Scheduled(initialDelay = 1000, fixedRate = 600000)  // TODO: Extract param as properties
     public void executeSpotv() {
         final List<SpotvVideo> crawledResult = spotvSchedulingService.crawl();
         spotvSchedulingService.handleCrawledResult(crawledResult);
