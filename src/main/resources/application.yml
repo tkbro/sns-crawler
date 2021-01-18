@@ -7,3 +7,6 @@ spring:
             username: beom
             password: ""
             auto-index-creation: true
+
+discord:
+    address: https://www.naver.com
