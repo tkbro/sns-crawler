@@ -9,7 +9,8 @@ spring:
             auto-index-creation: true
 
 discord:
-    address: https://www.naver.com
+    endpoint:
+    channel: "일반"
 
 selenium:
     chrome-driver-path: D:/programming/WebDriver/bin/chromedriver.exe
