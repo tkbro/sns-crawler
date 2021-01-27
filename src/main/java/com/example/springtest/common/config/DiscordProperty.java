@@ -12,4 +12,5 @@ import org.springframework.context.annotation.Configuration;
 public class DiscordProperty {
     private String endpoint;
     private String channel;
+    private String keyword;
 }

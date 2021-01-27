@@ -1,8 +1,7 @@
 package com.example.springtest;
 
 import com.example.springtest.common.config.DiscordProperty;
-import com.example.springtest.common.service.DiscordRelayApi;
-import com.example.springtest.module.spotv.model.SpotvVideo;
+import com.example.springtest.external.discord.DiscordRelayApi;
 import com.example.springtest.module.spotv.repository.SpotvMongoRepository;
 
 import org.junit.jupiter.api.Test;
