@@ -10,5 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "discord")
 public class DiscordProperty {
-    private String address;
+    private String endpoint;
+    private String channel;
+    private String keyword;
 }
