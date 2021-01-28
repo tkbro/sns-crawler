@@ -96,7 +96,7 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
                         result.add(new SpotvVideo(extractVideoIdByURL(href),
                                                   href,
                                                   title,
-                                                  Instant.now().toEpochMilli()));
+                                                  0L));
                         log.debug("node number : {}", videoNode);
                     }
                     videoNode += 1;
@@ -117,6 +117,11 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
 
     @Override
     public void handleCrawledResult(List<SpotvVideo> crawledResult) {
+        long currentEpochMilli = Instant.now().toEpochMilli();
+        for (SpotvVideo video : crawledResult) {
+            video.setCreatedAt(currentEpochMilli);
+            currentEpochMilli--;
+        }
         spotvMongoRepository.saveAll(crawledResult);
         log.info("Added videos size : {}", crawledResult.size());
     }
