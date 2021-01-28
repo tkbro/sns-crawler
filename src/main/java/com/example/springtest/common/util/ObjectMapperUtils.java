@@ -18,7 +18,6 @@ public final class ObjectMapperUtils {
         try {
             string = objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
             log.error("Mapping failed. [{}]", e.getMessage());
             throw new RuntimeException("Mapping failed.", e);
         }

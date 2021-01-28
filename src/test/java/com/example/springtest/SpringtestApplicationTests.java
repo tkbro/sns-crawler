@@ -32,6 +32,6 @@ class SpringtestApplicationTests {
 
     @Test
     void postDiscord () {
-        discordRelayApi.postDiscordRelayServer(discordProperty.getChannel(), spotvMongoRepository.findByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(1611578021535L));
+        discordRelayApi.postDiscordRelayServer(discordProperty.getChannel(), spotvMongoRepository.findByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(1611812399560L));
     }
 }
