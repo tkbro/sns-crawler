@@ -1,5 +1,6 @@
 package com.example.springtest.module.spotv.service;
 
+import com.example.springtest.common.config.SpotvProperty;
 import com.example.springtest.common.service.SchedulingService;
 import com.example.springtest.common.util.UrlUtils;
 import com.example.springtest.module.spotv.model.SpotvVideo;
@@ -32,11 +33,13 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
 
     private final SpotvMongoRepository spotvMongoRepository;
     private final ChromeDriver driver;
+    private final SpotvProperty spotvProperty;
 
     public SpotvSchedulingService(SpotvMongoRepository spotvMongoRepository,
-                                  @Value("${selenium.chrome-driver-path}") String chromeDriverPath) {
+                                  @Value("${selenium.chrome-driver-path}") String chromeDriverPath, SpotvProperty spotvProperty) {
         this.spotvMongoRepository = spotvMongoRepository;
         this.driver = buildChromeDriver(chromeDriverPath);
+        this.spotvProperty = spotvProperty;
     }
 
     private ChromeDriver buildChromeDriver(String chromeDriverPath) {
@@ -54,38 +57,47 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
     @Override
     public List<SpotvVideo> crawl() {
         final List<SpotvVideo> result = new ArrayList<>();
-        final int FIND_PER_LOOP = 60;
-        final int MAX_FIND_VIDEO = 3000;
         int videoNode = 0;
         boolean isTimeout;
         try {
-            driver.get("https://www.youtube.com/user/spotv/videos?view=0&sort=dd&flow=grid");
+            driver.get(spotvProperty.getUrl());
 
             WebDriverWait wait = new WebDriverWait(driver, 30);
-            WebElement parent = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#contents.style-scope ytd-item-section-renderer")));
-            if (!videoExists(parent)) {
+            WebElement parent = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(
+                "#contents.style-scope ytd-item-section-renderer")));
+            if (videoExists(parent)) {
+                parent = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(
+                    "#items.style-scope.ytd-grid-renderer")));
+            } else {
                 log.info("[There is no video on this channel]");
                 return result;
-            } else
-                parent = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#items.style-scope.ytd-grid-renderer")));
+            }
 
-            while (videoNode < MAX_FIND_VIDEO) {
-                isTimeout = isTimeoutBySendEndKey(videoNode, FIND_PER_LOOP, 10);
+            while (videoNode < spotvProperty.getMaxfindvideo()) {
+                isTimeout = isTimeoutBySendEndKey(videoNode, spotvProperty.getFindperloop(), 30);
                 Document doc = Jsoup.parse(parent.getAttribute("innerHTML"), "https://www.youtube.com");
                 Elements contents = doc.select("ytd-grid-video-renderer.style-scope.ytd-grid-renderer");
                 log.debug("Searched contents : {}", contents.size());
 
-                while (videoNode < contents.size() && videoNode < MAX_FIND_VIDEO) {
+                while (videoNode < contents.size() && videoNode < spotvProperty.getMaxfindvideo()) {
 
-                    String href = contents.get(videoNode).select("#video-title.yt-simple-endpoint.style-scope.ytd-grid-video-renderer").attr("abs:href");
+                    String href = contents.get(videoNode)
+                                          .select("#video-title.yt-simple-endpoint.style-scope.ytd-grid-video-renderer")
+                                          .attr("abs:href");
 
-                    if (!spotvMongoRepository.existsByVideoId(toVideoIdByURL(href))) {
-                        String title = contents.get(videoNode).select("#video-title.yt-simple-endpoint.style-scope.ytd-grid-video-renderer").text();
-                        result.add(new SpotvVideo(toVideoIdByURL(href), href, title, Instant.now().toEpochMilli()));
-                        log.debug("node number : {}", videoNode);
-                    } else {
+                    if (spotvMongoRepository.existsByVideoId(extractVideoIdByURL(href))) {
                         log.info("[Found existing video] New contents size : {}", result.size());
                         return result;
+                    } else {
+                        String title = contents.get(videoNode)
+                                               .select(
+                                                   "#video-title.yt-simple-endpoint.style-scope.ytd-grid-video-renderer")
+                                               .text();
+                        result.add(new SpotvVideo(extractVideoIdByURL(href),
+                                                  href,
+                                                  title,
+                                                  Instant.now().toEpochMilli()));
+                        log.debug("node number : {}", videoNode);
                     }
                     videoNode += 1;
                 }
@@ -109,7 +121,7 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
         log.info("Added videos size : {}", crawledResult.size());
     }
 
-    public String toVideoIdByURL(String href) throws MalformedURLException {
+    public String extractVideoIdByURL(String href) throws MalformedURLException {
         URL url = new URL(href);
         Map<String, String> queryMap = UrlUtils.getQueryMap(url.getQuery());
         return queryMap.get("v");
@@ -117,12 +129,12 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
 
     public boolean videoExists(WebElement parent) {
         List<WebElement> videos = parent.findElements(By.cssSelector("#items.style-scope.ytd-grid-renderer"));
-        if (!videos.isEmpty()) {
-            log.debug("Video exists on this channel");
-            return true;
-        } else {
+        if (videos.isEmpty()) {
             log.debug("Video does not exist");
             return false;
+        } else {
+            log.debug("Video exists on this channel");
+            return true;
         }
     }
 
@@ -132,13 +144,16 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
         do {
             driver.findElement(By.cssSelector("body")).sendKeys(Keys.END);
             WebDriverWait wait = new WebDriverWait(driver, 30);
-            WebElement parent = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#items.style-scope.ytd-grid-renderer")));
+            WebElement parent = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(
+                "#items.style-scope.ytd-grid-renderer")));
             contents = parent.findElements(By.cssSelector("ytd-grid-video-renderer.style-scope.ytd-grid-renderer"));
 
             if (System.currentTimeMillis() >= endTime) {
                 log.debug("[Time out] New found videos : {} ~ {}", videoNode, contents.size() - 1);
                 return true;
             }
+            log.debug("Waiting result by END key, time remaining : {}ms", endTime - System.currentTimeMillis());
+
         } while (contents.size() < videoNode + FIND_PER_LOOP);
         log.debug("New found videos : {} ~ {}", videoNode, contents.size() - 1);
         return false;
