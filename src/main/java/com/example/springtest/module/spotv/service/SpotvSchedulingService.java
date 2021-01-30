@@ -58,7 +58,7 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
     public List<SpotvVideo> crawl() {
         final List<SpotvVideo> result = new ArrayList<>();
         int videoNode = 0;
-        boolean isTimeout;
+        boolean isNotTimeout;
         try {
             driver.get(spotvProperty.getUrl());
 
@@ -73,20 +73,20 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
                 return result;
             }
 
-            while (videoNode < spotvProperty.getMaxfindvideo()) {
-                isTimeout = isTimeoutBySendEndKey(videoNode, spotvProperty.getFindperloop(), 30);
+            while (videoNode < spotvProperty.getMaxFindVideo()) {
+                isNotTimeout = sendEndKey(videoNode, 30);
                 Document doc = Jsoup.parse(parent.getAttribute("innerHTML"), "https://www.youtube.com");
                 Elements contents = doc.select("ytd-grid-video-renderer.style-scope.ytd-grid-renderer");
                 log.debug("Searched contents : {}", contents.size());
 
-                while (videoNode < contents.size() && videoNode < spotvProperty.getMaxfindvideo()) {
+                while (videoNode < contents.size() && videoNode < spotvProperty.getMaxFindVideo()) {
 
                     String href = contents.get(videoNode)
                                           .select("#video-title.yt-simple-endpoint.style-scope.ytd-grid-video-renderer")
                                           .attr("abs:href");
 
                     if (spotvMongoRepository.existsByVideoId(extractVideoIdByURL(href))) {
-                        log.info("[Found existing video] New contents size : {}", result.size());
+                        log.info("[Stopped searching because found existing video] New contents size : {}", result.size());
                         return result;
                     } else {
                         String title = contents.get(videoNode)
@@ -96,13 +96,13 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
                         result.add(new SpotvVideo(extractVideoIdByURL(href),
                                                   href,
                                                   title,
-                                                  0L));
+                                                  null));
                         log.debug("node number : {}", videoNode);
                     }
                     videoNode += 1;
                 }
-                if (isTimeout) {
-                    log.info("[There is no more video] New contents size : {}", result.size());
+                if (!isNotTimeout) {
+                    log.info("[No more videos found in the searching time] New contents size : {}", result.size());
                     return result;
                 }
             }
@@ -111,7 +111,7 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
             log.error("Crawl failed. [{}]", e.getMessage());
             throw new RuntimeException("Crawl failed.", e);
         }
-        log.info("[Found all to MAX_FIND_VIDEO]New contents size : {}", result.size());
+        log.info("[Found all to Maximum videos]New contents size : {}", result.size());
         return result;
     }
 
@@ -143,8 +143,12 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
         }
     }
 
-    public boolean isTimeoutBySendEndKey(int videoNode, int FIND_PER_LOOP, long timeOutInSeconds) {
-        long endTime = System.currentTimeMillis() + (timeOutInSeconds * 1000);     //Timeout is timeOutInSeconds
+    /**
+     * Send End Key into body and Find videos from {@code videoNode} to {@code videoNode + spotvProperty.getFindPerLoop} while {@code timeOutInSeconds}.
+     * @return true if this method find all video nodes while @timeOutInSeconds
+     */
+    public boolean sendEndKey(int videoNode, long timeOutInSeconds) {
+        long endTime = Instant.now().toEpochMilli() + (timeOutInSeconds * 1000);     //Timeout is timeOutInSeconds
         List<WebElement> contents;
         do {
             driver.findElement(By.cssSelector("body")).sendKeys(Keys.END);
@@ -153,15 +157,15 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
                 "#items.style-scope.ytd-grid-renderer")));
             contents = parent.findElements(By.cssSelector("ytd-grid-video-renderer.style-scope.ytd-grid-renderer"));
 
-            if (System.currentTimeMillis() >= endTime) {
+            if (Instant.now().toEpochMilli() >= endTime) {
                 log.debug("[Time out] New found videos : {} ~ {}", videoNode, contents.size() - 1);
-                return true;
+                return false;
             }
             log.debug("Waiting result by END key, time remaining : {}ms", endTime - System.currentTimeMillis());
 
-        } while (contents.size() < videoNode + FIND_PER_LOOP);
+        } while (contents.size() < videoNode + spotvProperty.getFindPerLoop());
         log.debug("New found videos : {} ~ {}", videoNode, contents.size() - 1);
-        return false;
+        return true;
     }
 
 }

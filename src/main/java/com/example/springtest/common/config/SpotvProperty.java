@@ -11,6 +11,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "spotv")
 public class SpotvProperty {
     private String url;
-    private int findperloop;
-    private int maxfindvideo;
+    private int findPerLoop;
+    private int maxFindVideo;
 }
