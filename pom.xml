@@ -9,10 +9,10 @@
         <version>2.3.4.RELEASE</version>
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>springtest</artifactId>
+    <artifactId>sns-crawler</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>springtest</name>
-    <description>Project for Spring Boot</description>
+    <name>sns-crawler</name>
+    <description>Crawler for Simple Notification Service</description>
 
     <properties>
         <java.version>8</java.version>
