@@ -13,5 +13,10 @@ discord:
     channel: 일반
     keyword:
 
+spotv:
+    url: https://www.youtube.com/user/spotv/videos?view=0&sort=dd&flow=grid
+    find-per-loop: 60
+    max-find-video: 3000
+
 selenium:
     chrome-driver-path: D:/programming/WebDriver/bin/chromedriver.exe
