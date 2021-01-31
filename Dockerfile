@@ -2,7 +2,7 @@
 # jdk8 has a bug. Ref: https://bugs.openjdk.java.net/browse/JDK-8067747
 FROM maven:3.6.3-openjdk-8-slim as builder
 
-COPY --chown=maven:maven . /sns-crawler
+COPY . /sns-crawler
 WORKDIR /sns-crawler
 RUN mvn clean package -Dmaven.test.skip=true
 
