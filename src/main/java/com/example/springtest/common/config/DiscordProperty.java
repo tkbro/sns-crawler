@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Configuration
@@ -12,5 +14,5 @@ import org.springframework.context.annotation.Configuration;
 public class DiscordProperty {
     private String endpoint;
     private String channel;
-    private String keyword;
+    private List<String> keywords;
 }

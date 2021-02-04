@@ -28,6 +28,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -132,20 +133,21 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
         spotvMongoRepository.saveAll(crawledResult);
         log.info("Added videos size : {}", crawledResult.size());
 
-        List<SpotvVideo> spotvVideosByKeyword = getSpotvVideosByKeyword(crawledResult);
+        List<SpotvVideo> spotvVideosByKeyword = filterSpotvVideosByKeyword(crawledResult,
+                                                                           discordProperty.getKeywords());
         if (spotvVideosByKeyword.isEmpty()) {
             log.info("[There is no video with keyword]");
-        } else discordRelayApi.postDiscordRelayServer(spotvVideosByKeyword);
+        } else {
+            discordRelayApi.postDiscordRelayServer(spotvVideosByKeyword, discordProperty.getChannel());
+        }
     }
 
-    public List<SpotvVideo> getSpotvVideosByKeyword(List<SpotvVideo> spotvVideos) {
-        List<SpotvVideo> spotvVideosByKeyword = new ArrayList<>();
-        for (SpotvVideo video : spotvVideos) {
-            if (video.getTitle().contains(discordProperty.getKeyword())) {
-                spotvVideosByKeyword.add(video);
-            }
-        }
-        return spotvVideosByKeyword;
+    public List<SpotvVideo> filterSpotvVideosByKeyword(List<SpotvVideo> spotvVideos, List<String> keywords) {
+
+        return spotvVideos.stream()
+                          .filter(spotvVideo -> (keywords.stream()
+                                                         .anyMatch(keyword -> spotvVideo.getTitle().contains(keyword))))
+                          .collect(Collectors.toList());
     }
 
     public String extractVideoIdByURL(String href) throws MalformedURLException {
