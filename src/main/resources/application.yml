@@ -11,7 +11,9 @@ spring:
 discord:
     endpoint:
     channel: 일반
-    keyword:
+    keywords:
+        - 토트넘
+        - 맨유
 
 spotv:
     url: https://www.youtube.com/user/spotv/videos?view=0&sort=dd&flow=grid

@@ -1,8 +1,10 @@
 package com.example.springtest.module.spotv.service;
 
+import com.example.springtest.common.config.DiscordProperty;
 import com.example.springtest.common.config.SpotvProperty;
 import com.example.springtest.common.service.SchedulingService;
 import com.example.springtest.common.util.UrlUtils;
+import com.example.springtest.external.discord.DiscordRelayApi;
 import com.example.springtest.module.spotv.model.SpotvVideo;
 import com.example.springtest.module.spotv.repository.SpotvMongoRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,12 +37,16 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
     private final SpotvMongoRepository spotvMongoRepository;
     private final ChromeDriver driver;
     private final SpotvProperty spotvProperty;
+    private final DiscordRelayApi discordRelayApi;
+    private final DiscordProperty discordProperty;
 
     public SpotvSchedulingService(SpotvMongoRepository spotvMongoRepository,
-                                  @Value("${selenium.chrome-driver-path}") String chromeDriverPath, SpotvProperty spotvProperty) {
+                                  @Value("${selenium.chrome-driver-path}") String chromeDriverPath, SpotvProperty spotvProperty, DiscordRelayApi discordRelayApi, DiscordProperty discordProperty) {
         this.spotvMongoRepository = spotvMongoRepository;
         this.driver = buildChromeDriver(chromeDriverPath);
         this.spotvProperty = spotvProperty;
+        this.discordRelayApi = discordRelayApi;
+        this.discordProperty = discordProperty;
     }
 
     private ChromeDriver buildChromeDriver(String chromeDriverPath) {
@@ -86,7 +93,8 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
                                           .attr("abs:href");
 
                     if (spotvMongoRepository.existsByVideoId(extractVideoIdByURL(href))) {
-                        log.info("[Stopped searching because found existing video] New contents size : {}", result.size());
+                        log.info("[Stopped searching because found existing video] New contents size : {}",
+                                 result.size());
                         return result;
                     } else {
                         String title = contents.get(videoNode)
@@ -124,6 +132,22 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
         }
         spotvMongoRepository.saveAll(crawledResult);
         log.info("Added videos size : {}", crawledResult.size());
+
+        List<SpotvVideo> spotvVideosByKeyword = filterSpotvVideosByKeyword(crawledResult,
+                                                                           discordProperty.getKeywords());
+        if (spotvVideosByKeyword.isEmpty()) {
+            log.info("[There is no video with keyword]");
+        } else {
+            discordRelayApi.postDiscordRelayServer(spotvVideosByKeyword, discordProperty.getChannel());
+        }
+    }
+
+    public List<SpotvVideo> filterSpotvVideosByKeyword(List<SpotvVideo> spotvVideos, List<String> keywords) {
+
+        return spotvVideos.stream()
+                          .filter(spotvVideo -> (keywords.stream()
+                                                         .anyMatch(keyword -> spotvVideo.getTitle().contains(keyword))))
+                          .collect(Collectors.toList());
     }
 
     public String extractVideoIdByURL(String href) throws MalformedURLException {
@@ -145,6 +169,7 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
 
     /**
      * Send End Key into body and Find videos from {@code videoNode} to {@code videoNode + spotvProperty.getFindPerLoop} while {@code timeOutInSeconds}.
+     *
      * @return true if this method find all video nodes while @timeOutInSeconds
      */
     public boolean sendEndKey(int videoNode, long timeOutInSeconds) {

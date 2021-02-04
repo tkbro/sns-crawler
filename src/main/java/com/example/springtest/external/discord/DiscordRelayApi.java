@@ -25,7 +25,7 @@ public class DiscordRelayApi {
         this.restTemplate = restTemplate;
     }
 
-    public void postDiscordRelayServer(String channel, List<SpotvVideo> spotvVideos) {
+    public void postDiscordRelayServer(List<SpotvVideo> spotvVideos, String channel) {
 
         String body = ObjectMapperUtils.toJsonByObject(buildRequest(channel, spotvVideos));
 
