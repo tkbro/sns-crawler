@@ -8,7 +8,7 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.3.4.RELEASE</version>
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>codes.dirty.sns</groupId>
     <artifactId>sns-crawler</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>sns-crawler</name>
