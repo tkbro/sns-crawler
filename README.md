@@ -1,4 +1,4 @@
-# project1-springtest
+# sns-crawler
 ### How to run
 1. Install Chrome.
 2. Choose a proper version of Chrome Driver and install it.
