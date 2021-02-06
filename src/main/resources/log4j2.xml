@@ -6,7 +6,13 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="DEBUG">
+        <Logger name="codes.dirty.sns.crawler" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="org.springframework.boot" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Root level="error">
             <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
