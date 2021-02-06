@@ -33,6 +33,6 @@ RUN wget -q -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com
 COPY --from=builder /sns-crawler/target/sns-crawler*.jar /sns-crawler/sns-crawler.jar
 WORKDIR /sns-crawler
 
-EXPOSE 8080
+EXPOSE 10080
 
 CMD ["java", "-jar", "/sns-crawler/sns-crawler.jar"]
