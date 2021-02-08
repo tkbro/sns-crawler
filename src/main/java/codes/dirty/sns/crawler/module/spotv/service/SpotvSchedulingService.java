@@ -57,6 +57,7 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
         options.addArguments("--headless");                 // Browser를 띄우지 않음
         options.addArguments("--disable-gpu");              // GPU를 사용하지 않음, Linux에서 headless를 사용하는 경우 필요함.
         options.addArguments("--no-sandbox");               // Sandbox 프로세스를 사용하지 않음, Linux에서 headless를 사용하는 경우 필요함.
+        options.addArguments("--disable-dev-shm-usage");    // https://github.com/elgalu/docker-selenium/issues/20#issuecomment-407101358
         options.addArguments("--blink-settings=imagesEnabled=false");
         return new ChromeDriver(options);
     }
