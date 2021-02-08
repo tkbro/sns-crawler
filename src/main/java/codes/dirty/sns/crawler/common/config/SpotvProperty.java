@@ -13,4 +13,5 @@ public class SpotvProperty {
     private String url;
     private int findPerLoop;
     private int maxFindVideo;
+    private int interval;
 }
