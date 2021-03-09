@@ -24,5 +24,8 @@ spotv:
     max-find-video: 3000
     interval: 600000
 
+lh:
+    interval: 600000
+
 selenium:
     chrome-driver-path: D:/programming/WebDriver/bin/chromedriver.exe
