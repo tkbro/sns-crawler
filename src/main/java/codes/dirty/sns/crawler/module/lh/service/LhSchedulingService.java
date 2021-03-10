@@ -5,13 +5,13 @@ import codes.dirty.sns.crawler.module.lh.model.LhNotice;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,38 +21,14 @@ public class LhSchedulingService implements SchedulingService<LhNotice> {
     public List<LhNotice> crawl() {
         final List<LhNotice> result = new ArrayList<>();
 
-        Document doc = null;
         try {
-            doc = requestDocument();
+            Document doc = requestDocument();
+
+            result.addAll(parseNotices(doc));
+
         } catch (IOException e) {
             log.error("Crawl failed. [{}]", e.getMessage());
             throw new RuntimeException("Crawl failed.", e);
-        }
-
-        Elements notices = doc.select("Rows Row");
-
-        for (Element notice : notices) {
-            String code = notice.select("#CCR_CNNT_SYS_DS_CD").text();
-            String id = notice.select("#PAN_ID").text();
-            String category = notice.select("#AIS_TP_CD_NM").text();
-            String title = notice.select("#PAN_NM").text();
-            String region = notice.select("#CNP_CD_NM").text();
-            String startDate = notice.select("#PAN_DT").text();
-            String endDate = notice.select("#CLSG_DT").text();
-            String status = notice.select("#PAN_SS").text();
-
-            if (!id.equals("")) {
-                result.add(LhNotice.builder()
-                                   .code(code)
-                                   .id(id)
-                                   .category(category)
-                                   .title(title)
-                                   .region(region)
-                                   .startDate(startDate)
-                                   .endDate(endDate)
-                                   .status(status)
-                                   .build());
-            }
         }
 
         for (LhNotice notice : result) {
@@ -60,8 +36,37 @@ public class LhSchedulingService implements SchedulingService<LhNotice> {
             log.debug(notice.getRegion() + " / " + notice.getStartDate() + " ~ " + notice.getEndDate() + " / " + notice.getStatus());
             log.debug("--------------");
         }
+        log.debug("{}", result.size());
 
         return result;
+    }
+
+    private List<LhNotice> parseNotices(Document doc) {
+        Elements notices = doc.select("#dsList Rows Row");
+
+        return notices.stream()
+                      .map(notice -> {
+                          final String code = notice.select("#CCR_CNNT_SYS_DS_CD").text();
+                          final String id = notice.select("#PAN_ID").text();
+                          final String category = notice.select("#AIS_TP_CD_NM").text();
+                          final String title = notice.select("#PAN_NM").text();
+                          final String region = notice.select("#CNP_CD_NM").text();
+                          final String startDate = notice.select("#PAN_DT").text();
+                          final String endDate = notice.select("#CLSG_DT").text();
+                          final String status = notice.select("#PAN_SS").text();
+
+                          return LhNotice.builder()
+                                         .code(code)
+                                         .id(id)
+                                         .category(category)
+                                         .title(title)
+                                         .region(region)
+                                         .startDate(startDate)
+                                         .endDate(endDate)
+                                         .status(status)
+                                         .build();
+                      })
+                      .collect(Collectors.toList());
     }
 
     private Document requestDocument() throws IOException {
