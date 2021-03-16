@@ -27,5 +27,10 @@ spotv:
 lh:
     interval: 600000
 
+new-balance:
+    interval: 50000
+    url: https://m.nbkorea.com/product/productDetail.action?styleCode=NBPDBS140S&colCode=91
+    keyword: 220
+
 selenium:
     chrome-driver-path: D:/programming/WebDriver/bin/chromedriver.exe

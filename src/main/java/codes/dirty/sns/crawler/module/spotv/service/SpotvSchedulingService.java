@@ -7,6 +7,13 @@ import codes.dirty.sns.crawler.common.util.UrlUtils;
 import codes.dirty.sns.crawler.external.discord.DiscordRelayApi;
 import codes.dirty.sns.crawler.module.spotv.model.SpotvVideo;
 import codes.dirty.sns.crawler.module.spotv.repository.SpotvMongoRepository;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,14 +29,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @Service
 @Slf4j
 public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
@@ -41,7 +40,10 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
     private final DiscordProperty discordProperty;
 
     public SpotvSchedulingService(SpotvMongoRepository spotvMongoRepository,
-                                  @Value("${selenium.chrome-driver-path}") String chromeDriverPath, SpotvProperty spotvProperty, DiscordRelayApi discordRelayApi, DiscordProperty discordProperty) {
+                                  @Value("${selenium.chrome-driver-path}") String chromeDriverPath,
+                                  SpotvProperty spotvProperty,
+                                  DiscordRelayApi discordRelayApi,
+                                  DiscordProperty discordProperty) {
         this.spotvMongoRepository = spotvMongoRepository;
         this.driver = buildChromeDriver(chromeDriverPath);
         this.spotvProperty = spotvProperty;
@@ -139,7 +141,8 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
         if (spotvVideosByKeyword.isEmpty()) {
             log.info("[There is no video with keyword]");
         } else {
-            discordRelayApi.postDiscordRelayServer(spotvVideosByKeyword, discordProperty.getChannel());
+            discordRelayApi.postDiscordRelayServer(discordProperty.getChannel(),
+                                                   formatRequestMsg(spotvVideosByKeyword));
         }
     }
 
@@ -169,7 +172,8 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
     }
 
     /**
-     * Send End Key into body and Find videos from {@code videoNode} to {@code videoNode + spotvProperty.getFindPerLoop} while {@code timeOutInSeconds}.
+     * Send End Key into body and Find videos from {@code videoNode} to {@code videoNode + spotvProperty.getFindPerLoop}
+     * while {@code timeOutInSeconds}.
      *
      * @return true if this method find all video nodes while @timeOutInSeconds
      */
@@ -194,4 +198,16 @@ public class SpotvSchedulingService implements SchedulingService<SpotvVideo> {
         return true;
     }
 
+    private String formatRequestMsg(List<SpotvVideo> spotvVideos) {
+        StringBuilder msg = new StringBuilder();
+        for (SpotvVideo video : spotvVideos) {
+            if (msg.length() != 0) {
+                msg.append(", ");
+            }
+            msg.append(video.getTitle())
+               .append(" - ")
+               .append(video.getUrl());
+        }
+        return msg.toString();
+    }
 }

@@ -2,6 +2,8 @@ package codes.dirty.sns.crawler.common.config;
 
 import codes.dirty.sns.crawler.module.lh.model.LhNotice;
 import codes.dirty.sns.crawler.module.lh.service.LhSchedulingService;
+import codes.dirty.sns.crawler.module.newbalance.model.NewBalanceStock;
+import codes.dirty.sns.crawler.module.newbalance.service.NewBalanceSchedulingService;
 import codes.dirty.sns.crawler.module.spotv.model.SpotvVideo;
 import codes.dirty.sns.crawler.module.spotv.service.SpotvSchedulingService;
 import codes.dirty.sns.crawler.module.jirye.model.JiryeRoom;
@@ -17,12 +19,16 @@ public class SchedulingConfiguration {
     private final JiryeSchedulingService jiryeSchedulingService;
     private final SpotvSchedulingService spotvSchedulingService;
     private final LhSchedulingService lhSchedulingService;
+    private final NewBalanceSchedulingService newBalanceSchedulingService;
 
     public SchedulingConfiguration(JiryeSchedulingService jiryeSchedulingService,
-                                   SpotvSchedulingService spotvSchedulingService, LhSchedulingService lhSchedulingService) {
+                                   SpotvSchedulingService spotvSchedulingService,
+                                   LhSchedulingService lhSchedulingService,
+                                   NewBalanceSchedulingService newBalanceSchedulingService) {
         this.jiryeSchedulingService = jiryeSchedulingService;
         this.spotvSchedulingService = spotvSchedulingService;
         this.lhSchedulingService = lhSchedulingService;
+        this.newBalanceSchedulingService = newBalanceSchedulingService;
     }
 
     @Scheduled(initialDelay = 100, fixedRate = 3600000)  // TODO: Extract param as properties
@@ -41,5 +47,11 @@ public class SchedulingConfiguration {
     public void executeLH() {
         final List<LhNotice> crawledResult = lhSchedulingService.crawl();
         lhSchedulingService.handleCrawledResult(crawledResult);
+    }
+
+    @Scheduled(initialDelay = 1000, fixedRateString = "${new-balance.interval}")
+    public void executeNewBalance() {
+        final List<NewBalanceStock> crawledResult = newBalanceSchedulingService.crawl();
+        newBalanceSchedulingService.handleCrawledResult(crawledResult);
     }
 }
