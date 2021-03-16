@@ -45,7 +45,7 @@ public class NewBalanceSchedulingService implements SchedulingService<NewBalance
 
             // Parse
             final String html = doc.toString();
-            final String stockLineString = html.substring(html.indexOf("PROD_STOCK"), html.indexOf("PROD_OPT_ICON"));
+            final String stockLineString = html.substring(html.indexOf("var PROD_STOCK"), html.indexOf("PROD_OPT_ICON"));
             final String stockJsonString = stockLineString.substring(stockLineString.indexOf("{"),
                                                                      stockLineString.indexOf("}") + 1);
             log.debug("stockJson: [{}]", stockJsonString);
@@ -72,7 +72,8 @@ public class NewBalanceSchedulingService implements SchedulingService<NewBalance
                                               && e.getStock() > 0)) {
             log.info("Target stock exists.");
             discordRelayApi.postDiscordRelayServer(discordProperty.getChannel(),
-                                                   "Target stock [" + newBalanceProperty.getKeyword() + "] exists.");
+                                                   "Target stock [" + newBalanceProperty.getKeyword() + "] on URL [" +
+                                                   newBalanceProperty.getUrl() + "] exists.");
         } else {
             log.info("Target stock does not exist.");
         }
