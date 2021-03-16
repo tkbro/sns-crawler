@@ -25,9 +25,9 @@ public class DiscordRelayApi {
         this.restTemplate = restTemplate;
     }
 
-    public void postDiscordRelayServer(List<SpotvVideo> spotvVideos, String channel) {
+    public void postDiscordRelayServer(String channel, String msg) {
 
-        String body = ObjectMapperUtils.toJsonByObject(buildRequest(channel, spotvVideos));
+        String body = ObjectMapperUtils.toJsonByObject(buildRequest(channel, msg));
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -36,23 +36,10 @@ public class DiscordRelayApi {
         restTemplate.postForEntity(discordProperty.getEndpoint() + PATH, entity, String.class);
     }
 
-    private DiscordRequest buildRequest(String channel, List<SpotvVideo> spotvVideos) {
+    private DiscordRequest buildRequest(String channel, String msg) {
         return DiscordRequest.builder()
                              .channel(channel)
-                             .msg(formatRequestMsg(spotvVideos).toString())
+                             .msg(msg)
                              .build();
-    }
-
-    private StringBuilder formatRequestMsg(List<SpotvVideo> spotvVideos) {
-        StringBuilder msg = new StringBuilder();
-        for (SpotvVideo video : spotvVideos) {
-            if (msg.length() != 0) {
-                msg.append(", ");
-            }
-            msg.append(video.getTitle())
-               .append(" - ")
-               .append(video.getUrl());
-        }
-        return msg;
     }
 }
