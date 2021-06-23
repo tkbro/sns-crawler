@@ -31,11 +31,11 @@ public class SchedulingConfiguration {
         this.newBalanceSchedulingService = newBalanceSchedulingService;
     }
 
-    @Scheduled(initialDelay = 100, fixedRate = 3600000)  // TODO: Extract param as properties
-    public void executeJirye() {
-        final List<JiryeRoom> crawledResult = jiryeSchedulingService.crawl();
-        jiryeSchedulingService.handleCrawledResult(crawledResult);
-    }
+//    @Scheduled(initialDelay = 100, fixedRate = 3600000)  // TODO: Extract param as properties
+//    public void executeJirye() {
+//        final List<JiryeRoom> crawledResult = jiryeSchedulingService.crawl();
+//        jiryeSchedulingService.handleCrawledResult(crawledResult);
+//    }
 
     @Scheduled(initialDelay = 1000, fixedRateString = "${spotv.interval}")  // TODO: Extract param as properties
     public void executeSpotv() {
@@ -43,15 +43,15 @@ public class SchedulingConfiguration {
         spotvSchedulingService.handleCrawledResult(crawledResult);
     }
 
-    @Scheduled(initialDelay = 1000, fixedRateString = "${lh.interval}")
-    public void executeLH() {
-        final List<LhNotice> crawledResult = lhSchedulingService.crawl();
-        lhSchedulingService.handleCrawledResult(crawledResult);
-    }
+//    @Scheduled(initialDelay = 1000, fixedRateString = "${lh.interval}")
+//    public void executeLH() {
+//        final List<LhNotice> crawledResult = lhSchedulingService.crawl();
+//        lhSchedulingService.handleCrawledResult(crawledResult);
+//    }
 
-    @Scheduled(initialDelay = 1000, fixedRateString = "${new-balance.interval}")
-    public void executeNewBalance() {
-        final List<NewBalanceStock> crawledResult = newBalanceSchedulingService.crawl();
-        newBalanceSchedulingService.handleCrawledResult(crawledResult);
-    }
+//    @Scheduled(initialDelay = 1000, fixedRateString = "${new-balance.interval}")
+//    public void executeNewBalance() {
+//        final List<NewBalanceStock> crawledResult = newBalanceSchedulingService.crawl();
+//        newBalanceSchedulingService.handleCrawledResult(crawledResult);
+//    }
 }
