@@ -1,7 +1,6 @@
 package codes.dirty.sns.crawler.module.race.service;
 
 import codes.dirty.sns.crawler.module.race.model.RaceProfile;
-import org.assertj.core.api.JUnitSoftAssertions;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
@@ -18,7 +17,6 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 class RaceProfileSchedulingServiceTest {
     private final String PROFILE_SAMPLE = "RACE_profile_sample.html";
-    private final String RESULT_SAMPLE = "RACE_result_sample.html";
 
     @Spy
     private RaceProfileSchedulingService raceProfileSchedulingService;
@@ -27,7 +25,7 @@ class RaceProfileSchedulingServiceTest {
     void parseTest() throws IOException {
         // given
         ClassLoader classLoader = getClass().getClassLoader();
-        final Document doc = Jsoup.parse(new File(classLoader.getResource("html").getPath()+"\\"+ PROFILE_SAMPLE), null);
+        final Document doc = Jsoup.parse(new File(classLoader.getResource("html").getPath() + "\\" + PROFILE_SAMPLE), null);
 
         // when
         List<RaceProfile> parseList = raceProfileSchedulingService.parseHtmlForHorseProfile(doc);
