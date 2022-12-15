@@ -1,9 +1,6 @@
 package codes.dirty.sns.crawler.module.race.service;
 
-import codes.dirty.sns.crawler.module.race.model.RaceProfile;
-import codes.dirty.sns.crawler.module.race.model.RaceRecord;
 import codes.dirty.sns.crawler.module.race.model.RaceRecordResult;
-import codes.dirty.sns.crawler.module.race.model.RaceResult;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
@@ -16,8 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class RaceResultSchedulingServiceTest {
