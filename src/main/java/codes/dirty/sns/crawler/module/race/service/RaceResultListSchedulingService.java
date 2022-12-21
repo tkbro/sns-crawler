@@ -1,9 +1,7 @@
 package codes.dirty.sns.crawler.module.race.service;
 
 import codes.dirty.sns.crawler.common.service.SchedulingService;
-import codes.dirty.sns.crawler.common.util.ObjectMapperUtils;
-import codes.dirty.sns.crawler.module.race.model.RaceProfileDetailRequest;
-import codes.dirty.sns.crawler.module.race.model.RaceRecordResult;
+import codes.dirty.sns.crawler.module.race.model.RaceData;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,30 +11,41 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Slf4j
-public class RaceResultListSchedulingService implements SchedulingService<RaceRecordResult> {
+public class RaceResultListSchedulingService implements SchedulingService<RaceData> {
     private final String baseUrl = "https://race.kra.co.kr";
     private final String detailUrl = "/raceScore/ScoretableDetailList.do";
 
+    private final RaceResultCrawlingService raceResultCrawlingService;
+    private final RaceProfileCrawlingService raceProfileCrawlingService;
+
+    public RaceResultListSchedulingService(RaceResultCrawlingService raceResultCrawlingService,
+                                           RaceProfileCrawlingService raceProfileCrawlingService) {
+        this.raceResultCrawlingService = raceResultCrawlingService;
+        this.raceProfileCrawlingService = raceProfileCrawlingService;
+    }
+
     @Override
-    public List<RaceRecordResult> crawl() {
+    public List<RaceData> crawl() {
         try {
             final Document doc = Jsoup.connect("test").get();
 
             // todo : validation (if need)
 
-            return this.parseHtml(doc);
+            return this.parseHtmlToRaceDataList(doc);
         } catch (IOException e) {
             log.error("Crawl failed. [{}]", e);
             throw new RuntimeException("Crawl failed.", e);
         }
     }
 
-    public List<RaceRecordResult> parseHtml(Document doc) {
+    public List<RaceData> parseHtmlToRaceDataList(Document doc) {
         List<Element> tableRowList = doc.select("div.tableType2 > table > tbody > tr");
+
+        List<RaceData> raceDataList = new ArrayList<>();
         tableRowList.forEach(row -> {
             String href = row.select("td > p > a").first().attr("href");
             int startInclusive = href.indexOf('(') + 1;
@@ -44,11 +53,14 @@ public class RaceResultListSchedulingService implements SchedulingService<RaceRe
             String parameterString = href.substring(startInclusive, endExclusive);
             parameterString = parameterString.replaceAll("\'", "");
             String[] parameters = parameterString.split(",");
-            log.debug(String.join(",", parameters));
+            String[] fieldNameList = new String[]{"meet", "realRcDate", "realRcNo"};
+            StringBuilder sb = new StringBuilder();
+            IntStream.range(0, parameters.length).forEach(i -> sb.append(String.format("%s=%s&", fieldNameList[i], parameters[i])));
+            String requestBody = sb.substring(0, sb.length() - 1).toString();
+            log.debug("req body = {}", requestBody);
 
             try {
-//                String body = ObjectMapperUtils.toJsonByObject(new RaceProfileDetailRequest(parameters[0], parameters[1], parameters[2]));
-                Document detailDoc = Jsoup.connect(baseUrl + detailUrl)
+                Document resultDetailDocument = Jsoup.connect(baseUrl + detailUrl)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
                     .header("Host", "race.kra.co.kr")
                     .header("Connection", "keep-alive")
@@ -64,19 +76,20 @@ public class RaceResultListSchedulingService implements SchedulingService<RaceRe
                     .header("Sec-Fetch-User", "?1")
                     .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
                     .header("Origin", "https://race.kra.co.kr")
-                    .requestBody("meet=1&realRcDate=20221218&realRcNo=1")
+                    .requestBody(requestBody)
                     .post();
 
-                log.debug("detailDoc: {}", detailDoc.toString());
+                log.debug("detailDoc: {}", resultDetailDocument.toString());
+                raceDataList.add(new RaceData(parameters[1], parameters[2], raceResultCrawlingService.parseHtmlForRaceResult(resultDetailDocument)));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
-        return new ArrayList<>();
+
+        return raceDataList;
     }
 
     @Override
-    public void handleCrawledResult(List<RaceRecordResult> crawledResult) {
-
+    public void handleCrawledResult(List<RaceData> crawledResult) {
     }
 }
