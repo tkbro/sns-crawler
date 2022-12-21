@@ -15,11 +15,11 @@ import java.util.List;
 
 
 @ExtendWith(MockitoExtension.class)
-class RaceProfileSchedulingServiceTest {
+class RaceProfileCrawlingServiceTest {
     private final String PROFILE_SAMPLE = "RACE_profile_sample.html";
 
     @Spy
-    private RaceProfileSchedulingService raceProfileSchedulingService;
+    private RaceProfileCrawlingService raceProfileCrawlingService;
 
     @Test
     void parseTest() throws IOException {
@@ -28,7 +28,7 @@ class RaceProfileSchedulingServiceTest {
         final Document doc = Jsoup.parse(new File(classLoader.getResource("html").getPath() + "\\" + PROFILE_SAMPLE), null);
 
         // when
-        List<RaceProfile> parseList = raceProfileSchedulingService.parseHtmlForHorseProfile(doc);
+        List<RaceProfile> parseList = raceProfileCrawlingService.parseHtmlForHorseProfile(doc);
         RaceProfile profile = parseList.stream().findFirst().orElseThrow();
 
         // then

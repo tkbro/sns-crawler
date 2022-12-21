@@ -15,10 +15,10 @@ import java.util.Comparator;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class RaceResultSchedulingServiceTest {
+class RaceResultCrawlingServiceTest {
     private final String RESULT_SAMPLE = "RACE_result_sample.html";
     @Spy
-    private RaceResultSchedulingService raceResultSchedulingService;
+    private RaceResultCrawlingService raceResultCrawlingService;
 
     @Test
     void parseTest() throws IOException {
@@ -27,7 +27,7 @@ class RaceResultSchedulingServiceTest {
         final Document doc = Jsoup.parse(new File(classLoader.getResource("html").getPath() + "\\" + RESULT_SAMPLE), null);
 
         // when
-        List<RaceRecordResult> parseList = raceResultSchedulingService.parseHtmlForRaceResult(doc);
+        List<RaceRecordResult> parseList = raceResultCrawlingService.parseHtmlForRaceResult(doc);
         RaceRecordResult result = parseList.stream()
             .sorted(Comparator.comparing(o -> o.getRaceResult().getRank()))
             .findFirst().orElseThrow();

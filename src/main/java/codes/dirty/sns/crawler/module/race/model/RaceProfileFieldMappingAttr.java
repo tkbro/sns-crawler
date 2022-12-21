@@ -1,6 +1,6 @@
 package codes.dirty.sns.crawler.module.race.model;
 
-import codes.dirty.sns.crawler.module.race.service.RaceProfileSchedulingService;
+import codes.dirty.sns.crawler.module.race.service.RaceProfileCrawlingService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,33 +15,33 @@ import lombok.NoArgsConstructor;
 @Getter
 public enum RaceProfileFieldMappingAttr {
 
-    NAME("name", RaceProfileSchedulingService.keyNameList.get(0)),
-    RATING("rating", RaceProfileSchedulingService.keyNameList.get(1)),
-    REG_NO("regNo", RaceProfileSchedulingService.keyNameList.get(2)),
-    GRADE("grade", RaceProfileSchedulingService.keyNameList.get(3)),
-    SEX("sex", RaceProfileSchedulingService.keyNameList.get(4)),
-    HOMETOWN("hometown", RaceProfileSchedulingService.keyNameList.get(5)),
-    TRAINER("trainer", RaceProfileSchedulingService.keyNameList.get(6)),
-    BIRTH("birth", RaceProfileSchedulingService.keyNameList.get(7)),
-    AGE("age", RaceProfileSchedulingService.keyNameList.get(8)),
-    COLOR("color", RaceProfileSchedulingService.keyNameList.get(9)),
-    OWNER("owner", RaceProfileSchedulingService.keyNameList.get(10)),
-    CAREER("career", RaceProfileSchedulingService.keyNameList.get(11)),
-    RETIRE("retire", RaceProfileSchedulingService.keyNameList.get(12)),
-    PLAY_YN("playYn", RaceProfileSchedulingService.keyNameList.get(13)),
-    BREEDER("breeder", RaceProfileSchedulingService.keyNameList.get(14)),
-    TOTAL_RECORD("totalRecord", RaceProfileSchedulingService.keyNameList.get(15)),
-    FATHER("father", RaceProfileSchedulingService.keyNameList.get(16)),
-    MOTHER("mother", RaceProfileSchedulingService.keyNameList.get(17)),
-    WIN_RATE("winRate", RaceProfileSchedulingService.keyNameList.get(18)),
-    NOTE("note", RaceProfileSchedulingService.keyNameList.get(19)),
-    TATTOO("tattoo", RaceProfileSchedulingService.keyNameList.get(20)),
-    REG_DATE("regDate", RaceProfileSchedulingService.keyNameList.get(21)),
-    FIRST_PRICE("firstPrice", RaceProfileSchedulingService.keyNameList.get(22)),
-    RECENT_PRICE("recentPrice", RaceProfileSchedulingService.keyNameList.get(23)),
-    TOTAL_PRIZE("totalPrize", RaceProfileSchedulingService.keyNameList.get(24)),
-    RECENT_6_PRIZE("recent6Prize", RaceProfileSchedulingService.keyNameList.get(25)),
-    RECENT_3_PRIZE("recent3Prize", RaceProfileSchedulingService.keyNameList.get(26)),
+    NAME("name", RaceProfileCrawlingService.keyNameList.get(0)),
+    RATING("rating", RaceProfileCrawlingService.keyNameList.get(1)),
+    REG_NO("regNo", RaceProfileCrawlingService.keyNameList.get(2)),
+    GRADE("grade", RaceProfileCrawlingService.keyNameList.get(3)),
+    SEX("sex", RaceProfileCrawlingService.keyNameList.get(4)),
+    HOMETOWN("hometown", RaceProfileCrawlingService.keyNameList.get(5)),
+    TRAINER("trainer", RaceProfileCrawlingService.keyNameList.get(6)),
+    BIRTH("birth", RaceProfileCrawlingService.keyNameList.get(7)),
+    AGE("age", RaceProfileCrawlingService.keyNameList.get(8)),
+    COLOR("color", RaceProfileCrawlingService.keyNameList.get(9)),
+    OWNER("owner", RaceProfileCrawlingService.keyNameList.get(10)),
+    CAREER("career", RaceProfileCrawlingService.keyNameList.get(11)),
+    RETIRE("retire", RaceProfileCrawlingService.keyNameList.get(12)),
+    PLAY_YN("playYn", RaceProfileCrawlingService.keyNameList.get(13)),
+    BREEDER("breeder", RaceProfileCrawlingService.keyNameList.get(14)),
+    TOTAL_RECORD("totalRecord", RaceProfileCrawlingService.keyNameList.get(15)),
+    FATHER("father", RaceProfileCrawlingService.keyNameList.get(16)),
+    MOTHER("mother", RaceProfileCrawlingService.keyNameList.get(17)),
+    WIN_RATE("winRate", RaceProfileCrawlingService.keyNameList.get(18)),
+    NOTE("note", RaceProfileCrawlingService.keyNameList.get(19)),
+    TATTOO("tattoo", RaceProfileCrawlingService.keyNameList.get(20)),
+    REG_DATE("regDate", RaceProfileCrawlingService.keyNameList.get(21)),
+    FIRST_PRICE("firstPrice", RaceProfileCrawlingService.keyNameList.get(22)),
+    RECENT_PRICE("recentPrice", RaceProfileCrawlingService.keyNameList.get(23)),
+    TOTAL_PRIZE("totalPrize", RaceProfileCrawlingService.keyNameList.get(24)),
+    RECENT_6_PRIZE("recent6Prize", RaceProfileCrawlingService.keyNameList.get(25)),
+    RECENT_3_PRIZE("recent3Prize", RaceProfileCrawlingService.keyNameList.get(26)),
     ;
 
     private String propertyName;

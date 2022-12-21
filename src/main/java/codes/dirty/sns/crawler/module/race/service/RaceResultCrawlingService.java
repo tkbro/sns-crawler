@@ -16,24 +16,10 @@ import java.util.stream.IntStream;
 
 @Service
 @Slf4j
-public class RaceResultSchedulingService implements SchedulingService<RaceRecordResult> {
+public class RaceResultCrawlingService {
     public static List<String> keyNameOrderedList = List.of("순위", "마번", "S1F-1C-2C-3C-G3F-4C-G1F", "S1F 지점",
         "1코너 지점", "2코너 지점", "3코너 지점", "G3F 지점", "4코너 지점", "G1F 지점", "3F-G", "1F-G", "경주 기록");
 
-
-    @Override
-    public List<RaceRecordResult> crawl() {
-        try {
-            final Document doc = Jsoup.connect("test").get();
-
-            // todo : validation (if need)
-
-            return this.parseHtmlForRaceResult(doc);
-        } catch (IOException e) {
-            log.error("Crawl failed. [{}]", e);
-            throw new RuntimeException("Crawl failed.", e);
-        }
-    }
 
     public List<RaceRecordResult> parseHtmlForRaceResult(Document doc) {
         List<Element> resultElementTableList = doc.select("div.tableType2 > table");
@@ -118,9 +104,5 @@ public class RaceResultSchedulingService implements SchedulingService<RaceRecord
         keySet.addAll(raceResultMap.keySet());
         keySet.addAll(raceRecordMap.keySet());
         return keySet.stream().map(key -> new RaceRecordResult(raceResultMap.get(key), raceRecordMap.get(key))).collect(Collectors.toList());
-    }
-
-    @Override
-    public void handleCrawledResult(List<RaceRecordResult> crawledResult) {
     }
 }

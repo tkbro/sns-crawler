@@ -1,6 +1,5 @@
 package codes.dirty.sns.crawler.module.race.model;
 
-import codes.dirty.sns.crawler.module.race.service.RaceProfileSchedulingService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

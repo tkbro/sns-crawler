@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
 
 @Service
 @Slf4j
-public class RaceProfileSchedulingService implements SchedulingService<RaceProfile> {
+public class RaceProfileCrawlingService implements SchedulingService<RaceProfile> {
     public static List<String> keyNameList = List.of("마명", "레이팅", "마번", "등급", "성별", "산지", "조교사", "생년월일",
         "연령", "모색", "마주", "출전기간", "퇴역자마", "출전예정", "생산자", "통산전적", "부마", "모마", "승률", "특징", "낙인", "경주마등록",
         "최초도입가", "최근거래가", "수득상금", "최근6회\r수득상금", "최근3회\r수득상금");
