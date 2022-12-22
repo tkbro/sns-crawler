@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
-class RaceResultListSchedulingServiceTest {
+class RaceResultDetailListSchedulingServiceTest {
     private final String PROFILE_LIST_SAMPLE = "RACE_result_list_sample.html";
     @Spy
     private RaceResultCrawlingService raceResultCrawlingService;

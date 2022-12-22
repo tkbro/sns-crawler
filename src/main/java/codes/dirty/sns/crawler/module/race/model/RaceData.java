@@ -14,5 +14,5 @@ import java.util.List;
 public class RaceData {
     private String date;
     private String raceIndex;
-    private List<RaceRecordResult> raceRecordResultList;
+    private List<RaceResult> raceResultList;
 }

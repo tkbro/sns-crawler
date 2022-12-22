@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public enum RaceProfileFieldMappingAttr {
+public enum RaceHorseProfileFieldMappingAttr {
 
     NAME("name", RaceProfileCrawlingService.keyNameList.get(0)),
     RATING("rating", RaceProfileCrawlingService.keyNameList.get(1)),

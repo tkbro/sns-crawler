@@ -1,8 +1,8 @@
 package codes.dirty.sns.crawler.module.race.service;
 
 import codes.dirty.sns.crawler.common.service.SchedulingService;
-import codes.dirty.sns.crawler.module.race.model.RaceProfile;
-import codes.dirty.sns.crawler.module.race.model.RaceProfileFieldMappingAttr;
+import codes.dirty.sns.crawler.module.race.model.RaceHorseProfile;
+import codes.dirty.sns.crawler.module.race.model.RaceHorseProfileFieldMappingAttr;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,14 +19,14 @@ import java.util.stream.IntStream;
 
 @Service
 @Slf4j
-public class RaceProfileCrawlingService implements SchedulingService<RaceProfile> {
+public class RaceProfileCrawlingService implements SchedulingService<RaceHorseProfile> {
     public static List<String> keyNameList = List.of("마명", "레이팅", "마번", "등급", "성별", "산지", "조교사", "생년월일",
         "연령", "모색", "마주", "출전기간", "퇴역자마", "출전예정", "생산자", "통산전적", "부마", "모마", "승률", "특징", "낙인", "경주마등록",
         "최초도입가", "최근거래가", "수득상금", "최근6회\r수득상금", "최근3회\r수득상금");
 
     // todo : replace to race profile url
     @Override
-    public List<RaceProfile> crawl() {
+    public List<RaceHorseProfile> crawl() {
         try {
             final Document doc = Jsoup.connect("test").get();
 
@@ -39,7 +39,7 @@ public class RaceProfileCrawlingService implements SchedulingService<RaceProfile
         }
     }
 
-    public List<RaceProfile> parseHtmlForHorseProfile(Document doc) {
+    public List<RaceHorseProfile> parseHtmlForHorseProfile(Document doc) {
         List<Element> horseProfileElementList = doc.select("div.tableType1 > table  > tbody > tr").not(".case");
         StringBuilder sb = new StringBuilder();
         Map<String, String> profileValueMap = new HashMap<>();
@@ -61,9 +61,9 @@ public class RaceProfileCrawlingService implements SchedulingService<RaceProfile
 
         log.debug("horse profile note info parse:" + noteContent);
 
-        Arrays.stream(RaceProfileFieldMappingAttr.values())
-            .collect(Collectors.toMap(RaceProfileFieldMappingAttr::getHtmlFieldName, RaceProfileFieldMappingAttr::getPropertyName));
-        RaceProfile profile = RaceProfile.builder()
+        Arrays.stream(RaceHorseProfileFieldMappingAttr.values())
+            .collect(Collectors.toMap(RaceHorseProfileFieldMappingAttr::getHtmlFieldName, RaceHorseProfileFieldMappingAttr::getPropertyName));
+        RaceHorseProfile profile = RaceHorseProfile.builder()
             .name(profileValueMap.get(keyNameList.get(0)))
             .rating(profileValueMap.get(keyNameList.get(1)))
             .regNo(profileValueMap.get(keyNameList.get(2)))
@@ -96,6 +96,6 @@ public class RaceProfileCrawlingService implements SchedulingService<RaceProfile
     }
 
     @Override
-    public void handleCrawledResult(List<RaceProfile> crawledResult) {
+    public void handleCrawledResult(List<RaceHorseProfile> crawledResult) {
     }
 }

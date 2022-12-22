@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @ToString
 @Builder
-public class RaceProfile {
+public class RaceHorseProfile {
     private String name;
     private String rating;
     private String regNo;

@@ -9,7 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class RaceRecordResult {
-    private RaceResult raceResult;
-    private RaceRecord raceRecord;
+public class RaceHorseProfileDetailRequest {
+    private String meet; // 1
+    private String realRcDate; // 20221218
+    private String realRcNo; // 1 ~ maxNo each date
 }

@@ -1,6 +1,6 @@
 package codes.dirty.sns.crawler.module.race.service;
 
-import codes.dirty.sns.crawler.module.race.model.RaceProfile;
+import codes.dirty.sns.crawler.module.race.model.RaceHorseProfile;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @ExtendWith(MockitoExtension.class)
-class RaceProfileCrawlingServiceTest {
+class RaceHorseProfileCrawlingServiceTest {
     private final String PROFILE_SAMPLE = "RACE_profile_sample.html";
 
     @Spy
@@ -28,8 +28,8 @@ class RaceProfileCrawlingServiceTest {
         final Document doc = Jsoup.parse(new File(classLoader.getResource("html").getPath() + "\\" + PROFILE_SAMPLE), null);
 
         // when
-        List<RaceProfile> parseList = raceProfileCrawlingService.parseHtmlForHorseProfile(doc);
-        RaceProfile profile = parseList.stream().findFirst().orElseThrow();
+        List<RaceHorseProfile> parseList = raceProfileCrawlingService.parseHtmlForHorseProfile(doc);
+        RaceHorseProfile profile = parseList.stream().findFirst().orElseThrow();
 
         // then
         Assertions.assertNotNull(profile);

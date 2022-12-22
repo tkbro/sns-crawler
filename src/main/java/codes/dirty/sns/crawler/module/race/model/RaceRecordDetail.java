@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class RaceRecord {
+public class RaceRecordDetail {
     private String rank;
     private String raceNo;
 

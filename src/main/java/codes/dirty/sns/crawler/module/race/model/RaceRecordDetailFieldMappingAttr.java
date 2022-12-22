@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public enum RaceRecordFieldMappingAttr {
+public enum RaceRecordDetailFieldMappingAttr {
 
     RANK("rank", "순위"),
     RACE_NO("raceNo", "마번"),
