@@ -19,4 +19,18 @@ public final class UrlUtils {
         }
         return map;
     }
+
+    /***
+     * {key1}={val1}&...&{keyn}={valn}
+     * @param keyValueMap
+     * @return
+     */
+    public static String getUrlEncodedRequestBody(Map<String, String> keyValueMap) {
+        StringBuilder sb = new StringBuilder();
+        keyValueMap.entrySet().forEach(entry -> {
+            sb.append(String.format("%s=%s&", entry.getKey(), entry.getValue()));
+        });
+        sb.substring(0, sb.length() - 1);
+        return sb.toString();
+    }
 }
