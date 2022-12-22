@@ -1,6 +1,7 @@
 package codes.dirty.sns.crawler.module.race.service;
 
 import codes.dirty.sns.crawler.common.service.SchedulingService;
+import codes.dirty.sns.crawler.common.util.RaceHtmlParseUtils;
 import codes.dirty.sns.crawler.module.race.model.RaceData;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -48,11 +49,7 @@ public class RaceResultListSchedulingService implements SchedulingService<RaceDa
         List<RaceData> raceDataList = new ArrayList<>();
         tableRowList.forEach(row -> {
             String href = row.select("td > p > a").first().attr("href");
-            int startInclusive = href.indexOf('(') + 1;
-            int endExclusive = href.indexOf(')');
-            String parameterString = href.substring(startInclusive, endExclusive);
-            parameterString = parameterString.replaceAll("\'", "");
-            String[] parameters = parameterString.split(",");
+            String[] parameters = RaceHtmlParseUtils.parseJavascriptParamtersToArray(href);
             String[] fieldNameList = new String[]{"meet", "realRcDate", "realRcNo"};
             StringBuilder sb = new StringBuilder();
             IntStream.range(0, parameters.length).forEach(i -> sb.append(String.format("%s=%s&", fieldNameList[i], parameters[i])));
@@ -63,10 +60,10 @@ public class RaceResultListSchedulingService implements SchedulingService<RaceDa
                 Document resultDetailDocument = Jsoup.connect(baseUrl + detailUrl)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
                     .header("Host", "race.kra.co.kr")
+                    .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
                     .header("Connection", "keep-alive")
                     .header("Cache-Control", "max-age=0")
                     .header("Accept-Encoding", "gzip, deflater")
-                    .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
                     .header("Cache-Control", "max-age=0")
                     .header("Content-Length", "95")
                     .header("Content-Type", "application/x-www-form-urlencoded")
