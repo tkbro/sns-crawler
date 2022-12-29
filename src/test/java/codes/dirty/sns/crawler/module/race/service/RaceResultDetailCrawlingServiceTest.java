@@ -30,7 +30,7 @@ class RaceResultDetailCrawlingServiceTest {
         List<RaceResult> parseList = raceResultCrawlingService.parseHtmlForRaceResult(doc);
         RaceResult result = parseList.stream()
             .sorted(Comparator.comparing(o -> o.getRaceResultDetail().getRank()))
-            .findFirst().orElseThrow();
+            .findFirst().orElseThrow(() -> new RuntimeException());
 
         // then
         Assertions.assertNotNull(result);
