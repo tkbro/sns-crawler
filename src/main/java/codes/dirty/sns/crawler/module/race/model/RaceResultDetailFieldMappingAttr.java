@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public enum RaceResultDetailFieldMappingAttr {
 
     RANK("rank", "순위"),
-    RACE_NO("raceNo", "마번"),
+    HORSE_NO("horseNo", "마번"),
 
     NAME("name", "마명"),
     COUNTRY("country", "산지"),

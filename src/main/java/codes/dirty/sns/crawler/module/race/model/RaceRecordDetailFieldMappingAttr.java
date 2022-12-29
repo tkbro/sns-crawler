@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public enum RaceRecordDetailFieldMappingAttr {
 
     RANK("rank", "순위"),
-    RACE_NO("raceNo", "마번"),
+    HORSE_NO("horseNo", "마번"),
 
     S1F_1C_2C_3C_G3F_4C_G1F("totalSectionRank", "S1F-1C-2C-3C-G3F-4C-G1F"),
     S1F("s1f", "S1F 지점"), // 출발후 200 m 구간,
