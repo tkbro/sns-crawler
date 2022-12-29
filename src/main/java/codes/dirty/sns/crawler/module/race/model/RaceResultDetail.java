@@ -25,4 +25,9 @@ public class RaceResultDetail {
     private String winRate;
     private String placeRate;
     private String gearState;
+
+    private String horseNo;
+    private String riderNo;
+    private String ownerNo;
+    private String breederNo;
 }

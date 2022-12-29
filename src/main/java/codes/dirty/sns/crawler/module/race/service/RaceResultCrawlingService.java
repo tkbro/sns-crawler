@@ -1,5 +1,6 @@
 package codes.dirty.sns.crawler.module.race.service;
 
+import codes.dirty.sns.crawler.common.util.RaceHtmlParseUtils;
 import codes.dirty.sns.crawler.module.race.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
@@ -34,6 +35,27 @@ public class RaceResultCrawlingService {
                 parseMap.put(key, val);
                 sb.append(String.format("key: %s, val: %s\n", key, val));
             });
+
+            String horseParameterHref = child.select("td > a[href*=Horse]").attr("href");
+            String[] horseDetailParameters = RaceHtmlParseUtils.parseJavascriptParamtersToArray(horseParameterHref);
+            String horseNo = horseDetailParameters[0];
+            parseMap.put(RaceResultDetailFieldMappingAttr.HORSE_NO.getHtmlFieldName(), horseNo);
+            sb.append(String.format("key: %s, val: %s\n", RaceResultDetailFieldMappingAttr.HORSE_NO.getHtmlFieldName(), horseNo));
+            String riderParameterHref = child.select("td > a[href*=Person]").attr("href");
+            String[] riderDetailParameters = RaceHtmlParseUtils.parseJavascriptParamtersToArray(riderParameterHref);
+            String riderNo = riderDetailParameters[0];
+            parseMap.put(RaceResultDetailFieldMappingAttr.RIDER_NO.getHtmlFieldName(), riderNo);
+            sb.append(String.format("key: %s, val: %s\n", RaceResultDetailFieldMappingAttr.RIDER_NO.getHtmlFieldName(), riderNo));
+            String ownerParameterHref = child.select("td > a[href*=Owner]").attr("href");
+            String[] ownerDetailParameters = RaceHtmlParseUtils.parseJavascriptParamtersToArray(ownerParameterHref);
+            String ownerNo = ownerDetailParameters[0];
+            sb.append(String.format("key: %s, val: %s\n", RaceResultDetailFieldMappingAttr.OWNER_NO.getHtmlFieldName(), ownerNo));
+            parseMap.put(RaceResultDetailFieldMappingAttr.OWNER_NO.getHtmlFieldName(), ownerNo);
+            String breederParameterHref = child.select("td > a[href*=Trainer]").attr("href");
+            String[] breederDetailParameters = RaceHtmlParseUtils.parseJavascriptParamtersToArray(breederParameterHref);
+            String breederNo = breederDetailParameters[0];
+            sb.append(String.format("key: %s, val: %s\n", RaceResultDetailFieldMappingAttr.BREEDER_NO.getHtmlFieldName(), breederNo));
+            parseMap.put(RaceResultDetailFieldMappingAttr.BREEDER_NO.getHtmlFieldName(), breederNo);
             resultMapList.add(parseMap);
         });
 
@@ -54,6 +76,10 @@ public class RaceResultCrawlingService {
                 .winRate(map.get(RaceResultDetailFieldMappingAttr.WIN_RATE.getHtmlFieldName()))
                 .placeRate(map.get(RaceResultDetailFieldMappingAttr.PLACE_RATE.getHtmlFieldName()))
                 .gearState(map.get(RaceResultDetailFieldMappingAttr.GEAR_STATE.getHtmlFieldName()))
+                .horseNo(map.get(RaceResultDetailFieldMappingAttr.HORSE_NO.getHtmlFieldName()))
+                .riderNo(map.get(RaceResultDetailFieldMappingAttr.RIDER_NO.getHtmlFieldName()))
+                .ownerNo(map.get(RaceResultDetailFieldMappingAttr.OWNER_NO.getHtmlFieldName()))
+                .breederNo(map.get(RaceResultDetailFieldMappingAttr.BREEDER_NO.getHtmlFieldName()))
                 .build())
             .collect(Collectors.toMap(RaceResultDetail::getRaceNo, Function.identity()));
 

@@ -27,6 +27,11 @@ public enum RaceResultDetailFieldMappingAttr {
     WIN_RATE("winRate", "단승"),
     PLACE_RATE("placeRate", "연승"),
     GEAR_STATE("gearState", "장구현황"),
+
+    HORSE_NO("horseNo", "horseNo"),
+    RIDER_NO("riderNo", "riderNo"),
+    OWNER_NO("ownerNo", "ownerNo"),
+    BREEDER_NO("breederNo", "breederNo"),
     ;
 
     private String propertyName;
