@@ -29,7 +29,7 @@ class RaceHorseProfileCrawlingServiceTest {
 
         // when
         List<RaceHorseProfile> parseList = raceProfileCrawlingService.parseHtmlForHorseProfile(doc);
-        RaceHorseProfile profile = parseList.stream().findFirst().orElseThrow();
+        RaceHorseProfile profile = parseList.stream().findFirst().orElseThrow(() -> new RuntimeException());
 
         // then
         Assertions.assertNotNull(profile);
