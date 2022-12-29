@@ -39,7 +39,7 @@ public class RaceResultCrawlingService {
 
         Map<String, RaceResultDetail> raceResultMap = resultMapList.stream().map(map -> RaceResultDetail.builder()
                 .rank(map.get(RaceResultDetailFieldMappingAttr.RANK.getHtmlFieldName()))
-                .horseNo(map.get(RaceResultDetailFieldMappingAttr.HORSE_NO.getHtmlFieldName()))
+                .raceNo(map.get(RaceResultDetailFieldMappingAttr.RACE_NO.getHtmlFieldName()))
                 .name(map.get(RaceResultDetailFieldMappingAttr.NAME.getHtmlFieldName()))
                 .country(map.get(RaceResultDetailFieldMappingAttr.COUNTRY.getHtmlFieldName()))
                 .sex(map.get(RaceResultDetailFieldMappingAttr.SEX.getHtmlFieldName()))
@@ -55,7 +55,7 @@ public class RaceResultCrawlingService {
                 .placeRate(map.get(RaceResultDetailFieldMappingAttr.PLACE_RATE.getHtmlFieldName()))
                 .gearState(map.get(RaceResultDetailFieldMappingAttr.GEAR_STATE.getHtmlFieldName()))
                 .build())
-            .collect(Collectors.toMap(RaceResultDetail::getHorseNo, Function.identity()));
+            .collect(Collectors.toMap(RaceResultDetail::getRaceNo, Function.identity()));
 
         log.debug("rank with profile parse" + sb);
 
@@ -80,7 +80,7 @@ public class RaceResultCrawlingService {
         });
         Map<String, RaceRecordDetail> raceRecordMap = resultMapList.stream().map(map -> RaceRecordDetail.builder()
                 .rank(map.get(RaceRecordDetailFieldMappingAttr.RANK.getHtmlFieldName()))
-                .horseNo(map.get(RaceRecordDetailFieldMappingAttr.HORSE_NO.getHtmlFieldName()))
+                .raceNo(map.get(RaceRecordDetailFieldMappingAttr.RACE_NO.getHtmlFieldName()))
                 .totalSectionRank(map.get(RaceRecordDetailFieldMappingAttr.S1F_1C_2C_3C_G3F_4C_G1F.getHtmlFieldName()))
                 .s1f(map.get(RaceRecordDetailFieldMappingAttr.S1F.getHtmlFieldName()))
                 .firstCorner(map.get(RaceRecordDetailFieldMappingAttr.FIRST_CORNER.getHtmlFieldName()))
@@ -93,7 +93,7 @@ public class RaceResultCrawlingService {
                 .furlong1fg(map.get(RaceRecordDetailFieldMappingAttr.FURLONG_1F_G.getHtmlFieldName()))
                 .raceRecord(map.get(RaceRecordDetailFieldMappingAttr.RACE_RECORD.getHtmlFieldName()))
                 .build())
-            .collect(Collectors.toMap(RaceRecordDetail::getHorseNo, Function.identity()));
+            .collect(Collectors.toMap(RaceRecordDetail::getRaceNo, Function.identity()));
 
         log.debug("rank with record parse" + sb);
 

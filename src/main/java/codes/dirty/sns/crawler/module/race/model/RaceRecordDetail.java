@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 public class RaceRecordDetail {
     private String rank;
-    private String horseNo;
+    private String raceNo;
 
     private String totalSectionRank;
     private String s1f;
