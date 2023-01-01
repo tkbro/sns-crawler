@@ -1,0 +1,8 @@
+## test/resources/application.yml
+
+discord:
+    endpoint:
+    channel: 일반
+    keywords:
+        - 토트넘
+        - 맨유
